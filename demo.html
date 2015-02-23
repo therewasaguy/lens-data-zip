@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>th-data-zip Demo</title>
+    <script src="../webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="th-data-zip.html">
+
+    <style>
+      body {
+        font-family: sans-serif;
+        font-size: 14px;
+      }
+
+      pre {
+        border: 1px solid #EEE;
+        font-size: 12px;
+        max-width: 300px;
+        max-height: 300px;
+        overflow: scroll;
+
+      }
+      #component {
+        border: 1px solid #BBB;
+        margin: 10px;
+        padding: 5px;
+        display: block;
+        width: 300px;
+      }
+
+      .component::before, .component::after {
+        content: '\2794';
+        position: absolute;
+        top: 50%;
+      }
+      .component::before {
+        right: -15px;
+      }
+
+      .component::after {
+        left: -15px;
+      }
+
+      section {
+        display: inline-block;
+        margin: 8px;
+        vertical-align: top;
+        position: relative;
+      }
+      html /deep/ input[is=core-input] {
+        border-bottom: 1px solid #E5E5E5 !important;
+      }
+
+    </style>
+
+  </head>
+  <body unresolved>
+
+    <template id="auto-bind-demo" is="auto-binding">
+
+      <section>
+        <label>Input:</label>
+        <pre id="input">{{myinput | json}}</pre>
+        <pre id="input">{{myinput_aux | json}}</pre>
+      </section>
+      <section class="component">
+        <label>Component:</label>
+        <th-data-zip id="component" input="{{myinput}}" input_aux="{{myinput_aux}}" output="{{myoutput}}"></th-data-zip>
+      </section>
+      <section>
+        <label>Output:</label>
+        <pre>{{myoutput | json}}</pre>
+      </section>
+
+      <script>
+
+        // input data
+        var input1 = new Object([{"label":"Marshawn Lynch, RB", "data": "1M"},{"label":"Dez Bryant, WR", "data": "2M"},{"label":"Jamaal Charles, RB", "data": "3M"},{"label":"Antonio Brown, WR", "data": "4M"},{"label":"Jordy Nelson, WR", "data": "5M"},{"label":"Arian Foster, RB", "data": "6M"},{"label":"DeMarco Murray, RB", "data": "7M"},{"label":"Eddie Lacy, RB", "data": "8M"},{"label":"Antonio Gates, TE", "data": "9M"},{"label":"Rob Gronkowski, TE"}]);
+          
+
+        var input2 = new Object([{"label":"Marshawn Lynch, RB", "value": "1"},{"label":"Dez Bryant, WR", "value": "2"},{"label":"Jamaal Charles, RB", "value": "3"},{"label":"Antonio Brown, WR", "value": "4"},{"label":"Jordy Nelson, WR", "value": "5"},{"label":"Arian Foster, RB", "value": "6"},{"label":"DeMarco Murray, RB", "value": "7"},{"label":"Eddie Lacy, RB", "value": "8"},{"label":"Antonio Gates, TE", "value": "9"}]);
+
+        // show component controls
+        component.showControls();
+
+        //set the input
+        component.input = input1;
+
+        component.input_aux = input2;
+
+        // helper function to stringify objects, used below like {{outputs | json}}
+        PolymerExpressions.prototype.json = function(object) {
+          return JSON.stringify(object, undefined, 2);
+        };
+
+
+      </script>
+    </template>
+  </body>
+
+</html>

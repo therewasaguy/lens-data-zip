@@ -1,0 +1,214 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-collapse/core-collapse.html">
+<link rel="import" href="../core-selector/core-selector.html">
+<!-- <link rel="import" href="../core-input/core-input.html">
+ --><link rel="import" href="../core-icon-button/core-icon-button.html">
+
+<!--
+Element providing solution to no problem in particular.
+
+##### Example
+
+    <th-data-zip></th-data-zip>
+
+@element th-data-zip
+@blurb Element providing solution to no problem in particular.
+@status alpha
+@homepage http://thelmanews.github.io/th-data-zip
+-->
+<polymer-element name="th-data-zip" attributes="input output input_aux smart">
+  <template>
+    <div class="th-container">
+      <link rel="stylesheet" href="th-data-zip.css">
+      <template if="{{!included}}">
+        <core-icon-button icon="perm-data-setting" on-click="{{showControls}}"></core-icon-button>
+      </template>
+
+      <!--core-collapse shows table settings. Toggled off by default-->
+      <core-collapse id="ctrl_collapse" opened="false">
+        <p class="info">Zips</p>
+        <label class="label" for="func_selector">Key1:</label>
+        <core-selector class="selector" id="value_selector" selected="{{zipColKey0}}" valueattr="label">
+          <template repeat="{{attr in _dataAttributes0}}">
+            <div class="col" label="{{attr}}">{{attr}}</div>
+          </template>
+        </core-selector>
+        <label class="label" for="func_selector">Key2:</label>
+        <core-selector class="selector" id="value_selector" selected="{{zipColKey1}}" valueattr="label">
+          <template repeat="{{attr in _dataAttributes1}}">
+            <div class="col" label="{{attr}}">{{attr}}</div>
+          </template>
+        </core-selector>
+        
+      </core-collapse>
+    </div>
+
+  </template>
+
+  <script src="../lodash/lodash.js"></script>
+
+  <script>
+    Polymer({
+
+      /**
+       * Input data
+       *
+       * @property input
+       * @type object
+       * @default undefined
+       */
+
+      /**
+       * Auxilary Input data for second input
+       *
+       * @property input_aux
+       * @type object
+       * @default undefined
+       */
+
+      /**
+       * Output data
+       *
+       * @property output
+       * @type object
+       * @default undefined
+       */
+
+
+      /**
+       * Name of the column from input which will be used as zip key.
+       *
+       * @property zipColKey0
+       * @type String
+       * @default undefined
+       */
+      zipColKey0: null,
+
+      /**
+       * Name of the column from input_aux which will be used as zip key.
+       *
+       * @property zipColKey1
+       * @type String
+       * @default undefined
+       */
+      zipColKey1: null,
+
+      /**
+       * Be smarter and find non-exact matches (Slows down performance)
+       * @type {Boolean}
+       */
+      smart: false,
+
+      // Observe changes on below attributes and trigger _calculateOutput() when changed
+      observe: {
+        beSmart: "_calculateOutput",
+        zipColKey0: "_calculateOutput",
+        zipColKey1: "_calculateOutput",
+      },
+
+
+      // Called when <th-data-split> element is created.
+      ready: function () {
+        //open the collapse if the component is included
+        if(this.included && !this.$.ctrl_collapse.opened) {
+          this.$.ctrl_collapse.toggle();
+        }
+       // this.inputChanged();
+       // this.input_auxChanged();
+      },
+
+      // Change watcher for input attribute. Triggered wheneve input is changed
+      inputChanged: function() {
+        var self = this;
+        if(!self.input || !self.input.length>0) {
+          return;
+        }
+        var firstItem = self.input[0];
+        if(!firstItem) {
+          return;
+        }
+        var attributes = Object.keys(firstItem);
+        
+        if(JSON.stringify(self._dataAttributes0) === JSON.stringify(attributes) ) {
+          //self._mapChartData();
+        }
+        else {
+          self._dataAttributes0 = attributes;
+        }
+
+        self._calculateOutput();
+      }, 
+
+      input_auxChanged: function() {
+        var self = this;
+        if(!self.input_aux || !self.input_aux.length>0) {
+          return;
+        }
+        var firstItem = self.input_aux[0];
+        if(!firstItem) {
+          return;
+        }
+        var attributes = Object.keys(firstItem);
+        
+        if(JSON.stringify(self._dataAttributes1) === JSON.stringify(attributes) ) {
+          //self._mapChartData();
+        }
+        else {
+          self._dataAttributes1 = attributes;
+        }
+
+        self._calculateOutput();
+      }, 
+
+      // Calculates output from input based on settings
+      _calculateOutput: function() {
+        var self = this;
+        console.log('calculate',self.zipColKey1)
+        if(self.zipColKey1 && self.zipColKey1)
+        {
+          var intersect = _.intersection(_.pluck(self.input, self.zipColKey1), _.pluck(self.input, self.zipColKey1));
+          console.log(intersect);
+
+          
+          var grouped = _.groupBy(self.input.concat(self.input_aux), self.zipColKey1);
+
+          console.log(grouped);
+/*
+          grouped.map(grouped, function(item) {
+            var key = Object.keys(item)[0];
+            var ret = {};
+            //ret[self.zipColKey0] = key;
+            console.log(key);
+            if(item[key].length>1) {
+              _.assign(ret, item[key][0], item[key][1]);
+              console.log(ret);
+            }
+            return ret;
+
+          })
+
+*/
+          self.output = [];
+          
+          _.forIn(grouped, function(value, key) {
+            var ret = {};
+            console.log(key,value);
+            if(value.length>1) {
+              _.assign(ret, value[0], value[1]);
+              console.log(ret);
+              self.output.push(ret);
+            }
+
+          });
+          console.log(self.output);
+          
+        }
+      },
+
+      // opens settings box 
+      showControls: function() {
+        this.$.ctrl_collapse.toggle();
+      }      
+    });
+  </script>
+</polymer-element>
