@@ -16,7 +16,7 @@
         border: 1px solid #EEE;
         font-size: 12px;
         max-width: 300px;
-        max-height: 300px;
+        max-height: 400px;
         overflow: scroll;
 
       }
@@ -51,6 +51,12 @@
         border-bottom: 1px solid #E5E5E5 !important;
       }
 
+      .count {
+        float: right;
+        font-size: 12px;
+      }
+
+
     </style>
 
   </head>
@@ -59,8 +65,9 @@
     <template id="auto-bind-demo" is="auto-binding">
 
       <section>
-        <label>Input:</label>
+        <label>Input 1:</label><span class="count">{{myinput.length}} records</span>
         <pre id="input">{{myinput | json}}</pre>
+        <label>Input 2:</label><span class="count">{{myinput_aux.length}} records</span>
         <pre id="input">{{myinput_aux | json}}</pre>
       </section>
       <section class="component">
@@ -68,25 +75,33 @@
         <th-data-zip id="component" input="{{myinput}}" input_aux="{{myinput_aux}}" output="{{myoutput}}"></th-data-zip>
       </section>
       <section>
-        <label>Output:</label>
+        <label>Output:</label><span class="count">{{myoutput.length}} records</span>
         <pre>{{myoutput | json}}</pre>
       </section>
 
       <script>
 
         // input data
-        var input1 = new Object([{"label":"Marshawn Lynch, RB", "data": "1M"},{"label":"Dez Bryant, WR", "data": "2M"},{"label":"Jamaal Charles, RB", "data": "3M"},{"label":"Antonio Brown, WR", "data": "4M"},{"label":"Jordy Nelson, WR", "data": "5M"},{"label":"Arian Foster, RB", "data": "6M"},{"label":"DeMarco Murray, RB", "data": "7M"},{"label":"Eddie Lacy, RB", "data": "8M"},{"label":"Antonio Gates, TE", "data": "9M"},{"label":"Rob Gronkowski, TE", "data": "10M"}]);
+        var input1 = new Object([{"name":"Marshawn Lynch, RB", "data": "1M", "value": "1"},{"name":"Dez Bryant, WR", "data": "2M"},{"name":"Jamaal Charles, RB", "data": "3M", "value": "4"},{"name":"Eddie Lacy, RB", "data": "8M"},{"name":"Rob Gronkowski, TE", "data": "10M"}]);
           
 
-        var input2 = new Object([{"label":"Marshawn Lynch, RB", "value": "1"},{"label":"Dez Bryant, WR", "value": "2"},{"label":"Jamaal Charles, RB", "value": "3"},{"label":"Antonio Brown, WR", "value": "4"},{"label":"Jordy Nelson, WR", "value": "5"},{"label":"Arian Foster, RB", "value": "6"},{"label":"DeMarco Murray, RB", "value": "7"},{"label":"Eddie Lacy, RB", "value": "8"},{"label":"Antonio Gates, TE", "value": "9"}]);
+        var input2 = new Object([{"label":"Marshawn Lynch, RB", "value": "1"},{"label":"Dez Bryant, WR", "value": "2"},{"label":"Jamaal Charles, RB", "value": "3"},{"label":"Eddie Lacy, RB", "value": "8"},{"label":"Antonio Gates, TE", "value": "9"}]);
 
         // show component controls
         component.showControls();
+
+        component.output = [];
+
 
         //set the input
         component.input = input1;
 
         component.input_aux = input2;
+
+        //adding these lines adds __toZip columns to inputs, weird!
+        //component.zipColKey0 = 'name';
+        //component.zipColKey1 = 'label';
+
 
         // helper function to stringify objects, used below like {{outputs | json}}
         PolymerExpressions.prototype.json = function(object) {

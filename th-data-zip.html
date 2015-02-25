@@ -16,7 +16,7 @@ Element providing solution to no problem in particular.
 @status alpha
 @homepage http://thelmanews.github.io/th-data-zip
 -->
-<polymer-element name="th-data-zip" attributes="input output input_aux smart outer">
+<polymer-element name="th-data-zip" attributes="input output input_aux smart zipColKey0 zipColKey2 joinType">
   <template>
     <div class="th-container">
       <link rel="stylesheet" href="th-data-zip.css">
@@ -26,21 +26,26 @@ Element providing solution to no problem in particular.
 
       <!--core-collapse shows table settings. Toggled off by default-->
       <core-collapse id="ctrl_collapse" opened="false">
-        <p class="info">Zips</p>
+        <p class="info">Zips two datasets together based on a common key</p>
         <label class="label" for="func_selector">Key1:</label>
-        <core-selector class="selector" id="value_selector" selected="{{zipColKey0}}" valueattr="label">
+        <core-selector class="selector" id="value_selector0" selected="{{zipColKey0}}" valueattr="label">
           <template repeat="{{attr in _dataAttributes0}}">
             <div class="col" label="{{attr}}">{{attr}}</div>
           </template>
         </core-selector>
         <label class="label" for="func_selector">Key2:</label>
-        <core-selector class="selector" id="value_selector" selected="{{zipColKey1}}" valueattr="label">
+        <core-selector class="selector" id="value_selector1" selected="{{zipColKey1}}" valueattr="label">
           <template repeat="{{attr in _dataAttributes1}}">
             <div class="col" label="{{attr}}">{{attr}}</div>
           </template>
         </core-selector>
-        <label class="label">outer join:</label>
-        <input type="checkbox" value="{{outer}}"
+        <label class="label">Zip (Join) Type:</label>
+        <core-selector class="selector" id="join_type" selected="{{joinType}}" valueattr="label">
+            <div class="col" label="inner">Strict/Inner</div>
+            <div class="col" label="outer">Full/Outer</div>
+        </core-selector>
+        <label class="label">Remove duplicate column:</label>
+        <input type="checkbox" checked="{{removeDuplicates}}">
         
       </core-collapse>
     </div>
@@ -102,17 +107,20 @@ Element providing solution to no problem in particular.
       smart: false,
 
       /**
-       * Do outer join (zip), 
-       * @type {Boolean}
+       * Join Type values: (inner/outer/outer-right), 
+       * @type {String}
        */
-      outer: false,
+      joinType: 'inner',
+
+      removeDuplicates: false,
 
       // Observe changes on below attributes and trigger _calculateOutput() when changed
       observe: {
         beSmart: "_calculateOutput",
         zipColKey0: "_calculateOutput",
         zipColKey1: "_calculateOutput",
-        outer: "_calculateOutput"
+        joinType: "_calculateOutput",
+        removeDuplicates: "_calculateOutput"
       },
 
 
@@ -177,9 +185,20 @@ Element providing solution to no problem in particular.
         {
           //var intersect = _.intersection(_.pluck(self.input, self.zipColKey1), _.pluck(self.input, self.zipColKey1));
           //console.log(intersect);
-
           
-          var grouped = _.groupBy(self.input.concat(self.input_aux), self.zipColKey1);
+          console.log('key',self.zipColKey0);
+
+          var input0 = _.map(self.input, function(item) {
+            item['__toZip'] = item[self.zipColKey0];
+            return item;
+          });
+
+          var input1 = _.map(self.input_aux, function(item) {
+            item['__toZip'] = item[self.zipColKey1];
+            return item;
+          });
+          
+          var grouped = _.groupBy(input0.concat(input1), '__toZip');
 
           console.log(grouped);
 /*
@@ -199,13 +218,26 @@ Element providing solution to no problem in particular.
 */
           self.output = [];
           
+          console.log(self.joinType);
+
           _.forIn(grouped, function(value, key) {
             var ret = {};
             console.log(key,value);
-            if(self.outer || value.length>1) {
-              _.assign(ret, value[0], value[1]);
-              console.log(ret);
-              self.output.push(ret);
+            //when there is nothing to groupby lodash groups them under undefined
+            if(key!=='undefined') {
+
+              //if inner join, only merge when there are at least two values grouped
+              if(self.joinType==='outer' || value.length>1) {
+                _.assign(ret, value[0], value[1]);
+
+                delete ret['__toZip'];
+                console.log('remove dupes', self.removeDuplicates);
+                if(self.removeDuplicates && self.zipColKey0!==self.zipColKey1 && ret[self.zipColKey0]) {
+                  delete ret[self.zipColKey1];
+                }
+                console.log(ret);
+                self.output.push(ret);
+              }
             }
 
           });
