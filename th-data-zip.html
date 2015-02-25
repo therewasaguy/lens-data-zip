@@ -16,7 +16,7 @@ Element providing solution to no problem in particular.
 @status alpha
 @homepage http://thelmanews.github.io/th-data-zip
 -->
-<polymer-element name="th-data-zip" attributes="input output input_aux smart">
+<polymer-element name="th-data-zip" attributes="input output input_aux smart outer">
   <template>
     <div class="th-container">
       <link rel="stylesheet" href="th-data-zip.css">
@@ -39,6 +39,8 @@ Element providing solution to no problem in particular.
             <div class="col" label="{{attr}}">{{attr}}</div>
           </template>
         </core-selector>
+        <label class="label">outer join:</label>
+        <input type="checkbox" value="{{outer}}"
         
       </core-collapse>
     </div>
@@ -99,11 +101,18 @@ Element providing solution to no problem in particular.
        */
       smart: false,
 
+      /**
+       * Do outer join (zip), 
+       * @type {Boolean}
+       */
+      outer: false,
+
       // Observe changes on below attributes and trigger _calculateOutput() when changed
       observe: {
         beSmart: "_calculateOutput",
         zipColKey0: "_calculateOutput",
         zipColKey1: "_calculateOutput",
+        outer: "_calculateOutput"
       },
 
 
@@ -166,8 +175,8 @@ Element providing solution to no problem in particular.
         console.log('calculate',self.zipColKey1)
         if(self.zipColKey1 && self.zipColKey1)
         {
-          var intersect = _.intersection(_.pluck(self.input, self.zipColKey1), _.pluck(self.input, self.zipColKey1));
-          console.log(intersect);
+          //var intersect = _.intersection(_.pluck(self.input, self.zipColKey1), _.pluck(self.input, self.zipColKey1));
+          //console.log(intersect);
 
           
           var grouped = _.groupBy(self.input.concat(self.input_aux), self.zipColKey1);
@@ -193,7 +202,7 @@ Element providing solution to no problem in particular.
           _.forIn(grouped, function(value, key) {
             var ret = {};
             console.log(key,value);
-            if(value.length>1) {
+            if(self.outer || value.length>1) {
               _.assign(ret, value[0], value[1]);
               console.log(ret);
               self.output.push(ret);
