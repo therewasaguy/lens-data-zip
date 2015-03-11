@@ -1,12 +1,12 @@
 {
-  "name": "th-data-zip",
+  "name": "lens-data-zip",
   "version": "0.0.0",
   "keywords": [
     "seed",
     "polymer",
     "web-components"
   ],
-  "main": "th-data-zip.html",
+  "main": "lens-data-zip.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^0.5.1",
     "lodash": "~3.0.0",
