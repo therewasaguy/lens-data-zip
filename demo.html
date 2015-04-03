@@ -56,8 +56,14 @@
         font-size: 12px;
       }
 
-
     </style>
+
+    <script>
+      // helper function to stringify objects, used below like {{outputs | json}}
+      PolymerExpressions.prototype.json = function(object) {
+        return JSON.stringify(object, undefined, 2);
+      };
+    </script>
 
   </head>
   <body unresolved>
@@ -87,11 +93,7 @@
 
         var input2 = new Object([{"label":"Marshawn Lynch, RB", "value": "1"},{"label":"Dez Bryant, WR", "value": "2"},{"label":"Jamaal Charles, RB", "value": "3"},{"label":"Eddie Lacy, RB", "value": "8"},{"label":"Antonio Gates, TE", "value": "9"}]);
 
-        // show component controls
-        component.showControls();
-
         component.output = [];
-
 
         //set the input
         component.input = input1;
@@ -101,12 +103,6 @@
         //adding these lines adds __toZip columns to inputs, weird!
         //component.zipColKey0 = 'name';
         //component.zipColKey1 = 'label';
-
-
-        // helper function to stringify objects, used below like {{outputs | json}}
-        PolymerExpressions.prototype.json = function(object) {
-          return JSON.stringify(object, undefined, 2);
-        };
 
 
       </script>
