@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-collapse/core-collapse.html">
 <link rel="import" href="../core-selector/core-selector.html">
 <!-- <link rel="import" href="../core-input/core-input.html">
  --><link rel="import" href="../core-icon-button/core-icon-button.html">
@@ -14,18 +13,13 @@ Element providing solution to no problem in particular.
 @element lens-data-zip
 @blurb Element providing solution to no problem in particular.
 @status alpha
-@homepage http://thelmanews.github.io/lens-data-zip
+@homepage http://lenses.github.io/lens-data-zip
 -->
 <polymer-element name="lens-data-zip" attributes="input output input_aux smart zipColKey0 zipColKey2 joinType">
   <template>
-    <div class="lens-container">
+    <div class="lens-container lens-data">
       <link rel="stylesheet" href="lens-data-zip.css">
-      <template if="{{!included}}">
-        <core-icon-button icon="perm-data-setting" on-click="{{showControls}}"></core-icon-button>
-      </template>
 
-      <!--core-collapse shows table settings. Toggled off by default-->
-      <core-collapse id="ctrl_collapse" opened="false">
         <p class="info">Zips two datasets together based on a common key</p>
         <label class="label" for="func_selector">Key1:</label>
         <core-selector class="selector" id="value_selector0" selected="{{zipColKey0}}" valueattr="label">
@@ -46,9 +40,7 @@ Element providing solution to no problem in particular.
         </core-selector>
         <label class="label">Remove duplicate column:</label>
         <input type="checkbox" checked="{{removeDuplicates}}">
-        
-      </core-collapse>
-    </div>
+    </div>  <!-- end container-->
 
   </template>
 
@@ -102,13 +94,18 @@ Element providing solution to no problem in particular.
 
       /**
        * Be smarter and find non-exact matches (Slows down performance)
-       * @type {Boolean}
+       *
+       * @property smart
+       * @type Boolean
+       * @default false
        */
       smart: false,
 
       /**
        * Join Type values: (inner/outer/outer-right), 
-       * @type {String}
+       * @property joinType
+       * @type String
+       * @default 'inner'
        */
       joinType: 'inner',
 
@@ -244,12 +241,8 @@ Element providing solution to no problem in particular.
           console.log(self.output);
           
         }
-      },
+      }
 
-      // opens settings box 
-      showControls: function() {
-        this.$.ctrl_collapse.toggle();
-      }      
     });
   </script>
 </polymer-element>
