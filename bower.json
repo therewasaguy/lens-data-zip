@@ -9,7 +9,7 @@
   "main": "lens-data-zip.html",
   "dependencies": {
     "polymer": "Polymer/polymer#~0.5.1",
-    "lodash": "~3.0.0",
+    "lodash": "~3.5.0",
     "core-collapse": "Polymer/core-collapse#~0.5.5",
     "core-selector": "Polymer/core-selector#~0.5.5",
     "core-icon-button": "Polymer/core-icon-button#~0.5.5"
