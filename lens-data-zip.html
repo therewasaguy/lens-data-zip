@@ -93,7 +93,7 @@ A transform component that zips two arrays of objects together based on a common
       zipColKey1: null,
 
       /**
-       * Be smarter and find non-exact matches (Slows down performance)
+       * Be smarter and find non-exact matches (Slows down performance).
        *
        * @property smart
        * @type Boolean
@@ -102,13 +102,25 @@ A transform component that zips two arrays of objects together based on a common
       smart: false,
 
       /**
-       * Join Type values: (inner/outer/outer-right), 
+       * Join Type values: (inner/outer). Options: <br>
+       *  - <code>'inner'</code> - Output will only include data whose columnKey appears
+       *  in both input sets and can be joined.<br/>
+       *  - <code>'outer'</code> - Output will also include data whose columnKey is unique
+       *  to one of the inputs, while joining data whose columnKeys appear in both.
+       * 
        * @property joinType
        * @type String
        * @default 'inner'
        */
       joinType: 'inner',
 
+      /**
+       *  If true, zipped columns will be merged into one column to remove duplicates.
+       *
+       *  @property removeDuplicates
+       *  @type Boolean
+       *  @default false
+       */
       removeDuplicates: false,
 
       // Observe changes on below attributes and trigger _calculateOutput() when changed
@@ -177,7 +189,7 @@ A transform component that zips two arrays of objects together based on a common
       // Calculates output from input based on settings
       _calculateOutput: function() {
         var self = this;
-        console.log('calculate',self.zipColKey1)
+
         if(self.zipColKey1 && self.zipColKey1)
         {
           //var intersect = _.intersection(_.pluck(self.input, self.zipColKey1), _.pluck(self.input, self.zipColKey1));
